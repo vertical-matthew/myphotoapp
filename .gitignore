@@ -1,0 +1,49 @@
+# -- Python-related --
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+
+# -- Virtual Environments --
+venv/
+env/
+.venv/
+
+# -- Django-related --
+db.sqlite3
+media/
+staticfiles/
+*.log
+
+# If using local environment variables
+.env
+
+# -- macOS --
+.DS_Store
+
+# -- Windows --
+Thumbs.db
+
+# -- VSCode / PyCharm / Other IDEs --
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# -- Coverage / Testing --
+.coverage
+.coverage.*
+htmlcov/
+.coverage_rc
+
+# -- Migrations (optional if you don't want to store them) --
+# Uncomment the next line if you prefer not to commit initial migrations:
+# */migrations/__pycache__/
+# */migrations/*.pyc
+# */migrations/*.py
+
