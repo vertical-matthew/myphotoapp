@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Photo Grid</title>
+  <!-- Bootstrap CSS -->
+  <!-- Note: For production, consider self-hosting or version pinning your assets -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <style>
+    /* Custom styling */
+    .photo-container {
+      border: 2px solid black;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100%;
+      max-width: 100%;
+      position: relative;
+      background-color: #f8f9fa;
+    }
+    .photo-container img {
+      width: 100%;
+      height: auto;
+      max-height: 200px; /* Limit the height for a more consistent grid */
+      object-fit: contain;
+      margin-bottom: 10px;
+    }
+    .photo-container button {
+      position: relative;
+      padding: 8px 16px;
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-size: 16px;
+      margin-top: 10px;
+    }
+    .photo-container button:hover {
+      background-color: #0056b3;
+    }
+    .caption {
+      font-size: 14px;
+      font-weight: bold;
+      color: black;
+      margin-bottom: 10px; /* Ensure the caption has space */
+    }
+    .labels {
+      text-align: center;
+      font-size: 16px;
+    }
+    .dropdown-menu {
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container my-4">
+    <!-- Header section -->
+    <div class="text-center mb-4">
+      <h1>Repair Tracking</h1>
+
+      <!-- Repair ID Button -->
+      <button class="btn btn-light" id="repairIdBtn" data-bs-toggle="modal" data-bs-target="#repairIdModal">
+        Repair ID 48
+      </button>
+
+      <!-- Project Dropdown -->
+      <div class="btn-group">
+        <button class="btn btn-light dropdown-toggle" type="button" id="projectDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+          Project 123 Main Street
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="projectDropdown">
+          <li><a class="dropdown-item" href="#">222 Water Street</a></li>
+          <li><a class="dropdown-item" href="#">777 Bingham Road</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Photo grid -->
+    <div class="row row-cols-1 row-cols-md-2 g-4">
+      <!-- Photo 1 -->
+      <div class="col">
+        <div class="photo-container">
+          <div class="caption">Survey Photo</div>
+          <img src="placeholder.jpg" alt="Photo 1" id="photo1">
+          <button onclick="document.getElementById('photo1-input').click()">Upload/Take Photo</button>
+        </div>
+      </div>
+      <!-- Photo 2 -->
+      <div class="col">
+        <div class="photo-container">
+          <div class="caption">Demo Photo</div>
+          <img src="placeholder.jpg" alt="Photo 2" id="photo2">
+          <button onclick="document.getElementById('photo2-input').click()">Upload/Take Photo</button>
+        </div>
+      </div>
+      <!-- Photo 3 -->
+      <div class="col">
+        <div class="photo-container">
+          <div class="caption">Finish Detail</div>
+          <img src="placeholder.jpg" alt="Photo 3" id="photo3">
+          <button onclick="document.getElementById('photo3-input').click()">Upload/Take Photo</button>
+        </div>
+      </div>
+      <!-- Photo 4 -->
+      <div class="col">
+        <div class="photo-container">
+          <div class="caption">Finish Context</div>
+          <img src="placeholder.jpg" alt="Photo 4" id="photo4">
+          <button onclick="document.getElementById('photo4-input').click()">Upload/Take Photo</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Labels section -->
+    <div class="labels mt-4">
+      <h5>Values</h5>
+      <ul class="list-unstyled">
+        <li>X Coordinate: 358</li>
+        <li>Y Coordinate: 125</li>
+        <li>Repair Label: Replace Unit</li>
+        <li>Area in Square Feet: 5</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- File input for photo upload -->
+  <input type="file" accept="image/*" style="display: none;" id="photo1-input" onchange="updateImage('photo1')">
+  <input type="file" accept="image/*" style="display: none;" id="photo2-input" onchange="updateImage('photo2')">
+  <input type="file" accept="image/*" style="display: none;" id="photo3-input" onchange="updateImage('photo3')">
+  <input type="file" accept="image/*" style="display: none;" id="photo4-input" onchange="updateImage('photo4')">
+
+  <!-- Modal for Repair ID input -->
+  <div class="modal fade" id="repairIdModal" tabindex="-1" aria-labelledby="repairIdModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="repairIdModalLabel">Enter New Repair ID</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <input type="number" class="form-control" id="newRepairId" placeholder="Enter new repair ID">
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" onclick="updateRepairId()">Save Repair ID</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function updateImage(photoId) {
+      var input = document.getElementById(photoId + '-input');
+      var photoElement = document.getElementById(photoId);
+      var file = input.files[0];
+      var reader = new FileReader();
+
+      reader.onloadend = function () {
+        photoElement.src = reader.result;
+      };
+
+      if (file) {
+        reader.readAsDataURL(file);
+      }
+    }
+
+    function updateRepairId() {
+      var newRepairId = document.getElementById('newRepairId').value;
+      if (newRepairId) {
+        document.getElementById('repairIdBtn').innerText = "Repair ID " + newRepairId;
+        var repairIdModal = new bootstrap.Modal(document.getElementById('repairIdModal'));
+        repairIdModal.hide();
+      }
+    }
+  </script>
+
+  <!-- Bootstrap JS and dependencies -->
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
+</body>
+</html>
