@@ -16,7 +16,14 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from django.http import HttpResponse
+
+# Temporary homepage view for testing
+def home(request):
+    return HttpResponse("Welcome to My Photo App")
 
 urlpatterns = [
-    path("admin/", admin.site.urls),
+    path('admin/', admin.site.urls),
+    path('', home, name='home'),  # This serves content at /
 ]
+
