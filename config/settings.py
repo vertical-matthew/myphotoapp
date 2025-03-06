@@ -23,10 +23,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = "django-insecure-z-=(1wc#gnz9n7chf0k4ym7&44@s_kmhz#j*snnawe-t2-)r)e"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-#ALLOWED_HOSTS = ['vertical-access.com', 'www.vertical-access.com']
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['vertical-access.com', 'www.vertical-access.com']
+#ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -118,3 +118,7 @@ STATIC_URL = "static/"
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+FORCE_SCRIPT_NAME = '/myphotoapp'
+STATIC_URL = '/myphotoapp/static/'
+
