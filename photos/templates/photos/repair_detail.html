@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Repair Detail</title>
+  <!-- Bootstrap CSS -->
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  >
+</head>
+<body class="bg-light">
+
+  <div class="container py-4">
+    <h1>Repair {{ repair.repair_id }} (Project: {{ project.name }})</h1>
+
+    <div class="mb-3">
+      <p>Coordinates: ({{ repair.x_coord }}, {{ repair.y_coord }})</p>
+      <p>Label: {{ repair.label }}</p>
+      <p>Area: {{ repair.area_sq_ft }} sq ft</p>
+    </div>
+
+    <h2>Photos</h2>
+    <ul class="list-group mb-4">
+      {% for p in photos %}
+        <li class="list-group-item">
+          <strong>{{ p.get_category_display }} Photo</strong><br>
+          <img
+            src="{{ p.image.url }}"
+            alt="Photo for repair {{ repair.repair_id }}"
+            width="200"
+            class="my-2"
+          >
+          <br>Uploaded on: {{ p.uploaded_at }}
+        </li>
+      {% endfor %}
+    </ul>
+
+    <h3>Upload a New Photo</h3>
+    <form method="POST" enctype="multipart/form-data" class="mb-4">
+      {% csrf_token %}
+      <div class="mb-3">
+        <label for="category-select" class="form-label">Category:</label>
+        <select name="category" id="category-select" class="form-select">
+          <option value="survey">Survey</option>
+          <option value="demo">Demo</option>
+          <option value="detail">Detail</option>
+          <option value="context">Context</option>
+        </select>
+      </div>
+
+      <div class="mb-3">
+        <label for="image-input" class="form-label">Choose a photo:</label>
+        <input
+          type="file"
+          name="image"
+          accept="image/*"
+          id="image-input"
+          class="form-control"
+        >
+      </div>
+
+      <button type="submit" name="upload_photo" class="btn btn-primary">
+        Upload Photo
+      </button>
+    </form>
+
+    <div>
+      <a
+        href="{% url 'project_detail' project.id %}"
+        class="btn btn-secondary"
+      >
+        Back to {{ project.name }} Repairs
+      </a>
+      <a
+        href="{% url 'project_list' %}"
+        class="btn btn-secondary"
+      >
+        All Projects
+      </a>
+      <a
+        href="{% url 'main_page' %}"
+        class="btn btn-secondary"
+      >
+        Main Page
+      </a>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS -->
+  <script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js">
+  </script>
+</body>
+</html>

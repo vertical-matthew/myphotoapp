@@ -1,0 +1,596 @@
+2025-03-07 09:34:30,246 - INFO - Script started.
+2025-03-07 09:34:30,246 - INFO - Scanning directory: C:\Users\matt\Desktop\django\myphotoapp
+2025-03-07 09:34:30,247 - INFO - Processing file: C:\Users\matt\Desktop\django\myphotoapp\djangoclip.py
+2025-03-07 09:34:30,247 - INFO - Processing file: C:\Users\matt\Desktop\django\myphotoapp\manage.py
+2025-03-07 09:34:30,247 - INFO - Scanning directory: C:\Users\matt\Desktop\django\myphotoapp\config
+2025-03-07 09:34:30,247 - INFO - Processing file: C:\Users\matt\Desktop\django\myphotoapp\config\asgi.py
+2025-03-07 09:34:30,247 - INFO - Processing file: C:\Users\matt\Desktop\django\myphotoapp\config\settings.py
+2025-03-07 09:34:30,248 - INFO - Processing file: C:\Users\matt\Desktop\django\myphotoapp\config\urls.py
+2025-03-07 09:34:30,248 - INFO - Processing file: C:\Users\matt\Desktop\django\myphotoapp\config\wsgi.py
+2025-03-07 09:34:30,248 - INFO - Processing file: C:\Users\matt\Desktop\django\myphotoapp\config\__init__.py
+2025-03-07 09:34:30,248 - INFO - Scanning directory: C:\Users\matt\Desktop\django\myphotoapp\photos
+2025-03-07 09:34:30,248 - INFO - Processing file: C:\Users\matt\Desktop\django\myphotoapp\photos\admin.py
+2025-03-07 09:34:30,249 - INFO - Processing file: C:\Users\matt\Desktop\django\myphotoapp\photos\apps.py
+2025-03-07 09:34:30,249 - INFO - Processing file: C:\Users\matt\Desktop\django\myphotoapp\photos\models.py
+2025-03-07 09:34:30,249 - INFO - Processing file: C:\Users\matt\Desktop\django\myphotoapp\photos\tests.py
+2025-03-07 09:34:30,249 - INFO - Processing file: C:\Users\matt\Desktop\django\myphotoapp\photos\views.py
+2025-03-07 09:34:30,249 - INFO - Processing file: C:\Users\matt\Desktop\django\myphotoapp\photos\__init__.py
+2025-03-07 09:34:30,250 - INFO - Scanning directory: C:\Users\matt\Desktop\django\myphotoapp\photos\templates
+2025-03-07 09:34:30,250 - INFO - Scanning directory: C:\Users\matt\Desktop\django\myphotoapp\photos\templates\photos
+2025-03-07 09:34:30,250 - INFO - Processing file: C:\Users\matt\Desktop\django\myphotoapp\photos\templates\photos\main.html
+2025-03-07 09:34:30,289 - INFO - Project contents copied to clipboard successfully.
+
+
+=== Full Project Content ===
+
+
+
+----- FILE: C:\Users\matt\Desktop\django\myphotoapp\djangoclip.py -----
+
+
+import os
+import datetime
+import logging
+import pyperclip
+
+def main():
+    # Get the project root directory (assumes the script is run at the root)
+    project_root = os.getcwd()
+    print(f"Scanning Django project at: {project_root}")
+
+    # Setup a log file with a date-timestamp in its name (file name safe)
+    timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+    log_filename = f"project_log_{timestamp}.txt"
+    logging.basicConfig(
+        filename=log_filename,
+        level=logging.DEBUG,
+        format='%(asctime)s - %(levelname)s - %(message)s'
+    )
+    print(f"Logging details will be saved to: {log_filename}")
+    logging.info("Script started.")
+
+    # Only include files that represent your custom logic
+    allowed_extensions = {'.py', '.html', '.css', '.js'}
+
+    # Directories to be skipped during the scan
+    skip_dirs = {'.git', '.idea', 'static', 'staticfiles', 'migrations', '__pycache__', 'venv'}
+
+    project_text = []
+
+    # Walk through the project directories
+    for root, dirs, files in os.walk(project_root):
+        # Remove directories we want to skip so they are not walked into
+        dirs[:] = [d for d in dirs if d not in skip_dirs]
+        print(f"Scanning directory: {root}")
+        logging.info(f"Scanning directory: {root}")
+        
+        for file in files:
+            # Check file extension; ignore files that are not in our allowed list
+            file_ext = os.path.splitext(file)[1].lower()
+            if file_ext not in allowed_extensions:
+                continue
+
+            # Construct the full file path
+            file_path = os.path.join(root, file)
+            print(f"Processing file: {file_path}")
+            logging.info(f"Processing file: {file_path}")
+            
+            try:
+                with open(file_path, 'r', encoding='utf-8') as f:
+                    content = f.read()
+                # Append header with file location and its contents
+                header = f"\n\n----- FILE: {file_path} -----\n\n"
+                project_text.append(header)
+                project_text.append(content)
+            except Exception as e:
+                error_msg = f"Could not read file {file_path}: {e}"
+                print(error_msg)
+                logging.error(error_msg)
+
+    # Combine all collected content into a single string
+    full_text = "\n".join(project_text)
+
+    # Copy the full text to the system clipboard
+    try:
+        pyperclip.copy(full_text)
+        print("Project contents have been copied to the clipboard.")
+        logging.info("Project contents copied to clipboard successfully.")
+    except Exception as e:
+        error_msg = f"Failed to copy project contents to clipboard: {e}"
+        print(error_msg)
+        logging.error(error_msg)
+
+    # Append the complete project content to the log file
+    try:
+        with open(log_filename, 'a', encoding='utf-8') as log_file:
+            log_file.write("\n\n=== Full Project Content ===\n\n")
+            log_file.write(full_text)
+        print(f"Project contents have been appended to the log file: {log_filename}")
+        logging.info("Project contents appended to log file successfully.")
+    except Exception as e:
+        error_msg = f"Failed to write project content to log file: {e}"
+        print(error_msg)
+        logging.error(error_msg)
+
+    print("Script finished successfully.")
+    logging.info("Script finished successfully.")
+
+if __name__ == '__main__':
+    main()
+
+
+
+----- FILE: C:\Users\matt\Desktop\django\myphotoapp\manage.py -----
+
+
+#!/usr/bin/env python
+"""Django's command-line utility for administrative tasks."""
+import os
+import sys
+
+
+def main():
+    """Run administrative tasks."""
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings")
+    try:
+        from django.core.management import execute_from_command_line
+    except ImportError as exc:
+        raise ImportError(
+            "Couldn't import Django. Are you sure it's installed and "
+            "available on your PYTHONPATH environment variable? Did you "
+            "forget to activate a virtual environment?"
+        ) from exc
+    execute_from_command_line(sys.argv)
+
+
+if __name__ == "__main__":
+    main()
+
+
+
+----- FILE: C:\Users\matt\Desktop\django\myphotoapp\config\asgi.py -----
+
+
+"""
+ASGI config for config project.
+
+It exposes the ASGI callable as a module-level variable named ``application``.
+
+For more information on this file, see
+https://docs.djangoproject.com/en/5.1/howto/deployment/asgi/
+"""
+
+import os
+
+from django.core.asgi import get_asgi_application
+
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings")
+
+application = get_asgi_application()
+
+
+
+----- FILE: C:\Users\matt\Desktop\django\myphotoapp\config\settings.py -----
+
+
+"""
+Django settings for config project.
+
+Generated by 'django-admin startproject' using Django 5.1.7.
+
+For more information on this file, see
+https://docs.djangoproject.com/en/5.1/topics/settings/
+
+For the full list of settings and their values, see
+https://docs.djangoproject.com/en/5.1/ref/settings/
+"""
+
+from pathlib import Path
+
+# Build paths inside the project like this: BASE_DIR / 'subdir'.
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+
+# Quick-start development settings - unsuitable for production
+# See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
+
+# SECURITY WARNING: keep the secret key used in production secret!
+SECRET_KEY = "django-insecure-z-=(1wc#gnz9n7chf0k4ym7&44@s_kmhz#j*snnawe-t2-)r)e"
+
+# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = True
+
+#ALLOWED_HOSTS = ['vertical-access.com', 'www.vertical-access.com']
+ALLOWED_HOSTS = []
+
+
+# Application definition
+
+INSTALLED_APPS = [
+    "django.contrib.admin",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
+
+    "photos",
+]
+
+MIDDLEWARE = [
+    "django.middleware.security.SecurityMiddleware",
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.common.CommonMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
+]
+
+ROOT_URLCONF = "config.urls"
+
+TEMPLATES = [
+    {
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
+        "DIRS": [],
+        "APP_DIRS": True,
+        "OPTIONS": {
+            "context_processors": [
+                "django.template.context_processors.debug",
+                "django.template.context_processors.request",
+                "django.contrib.auth.context_processors.auth",
+                "django.contrib.messages.context_processors.messages",
+            ],
+        },
+    },
+]
+
+WSGI_APPLICATION = "config.wsgi.application"
+
+
+# Database
+# https://docs.djangoproject.com/en/5.1/ref/settings/#databases
+
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
+    }
+}
+
+
+# Password validation
+# https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
+
+AUTH_PASSWORD_VALIDATORS = [
+    {
+        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
+    },
+    {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",},
+    {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",},
+    {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",},
+]
+
+
+# Internationalization
+# https://docs.djangoproject.com/en/5.1/topics/i18n/
+
+LANGUAGE_CODE = "en-us"
+
+TIME_ZONE = "UTC"
+
+USE_I18N = True
+
+USE_TZ = True
+
+
+# Static files (CSS, JavaScript, Images)
+# https://docs.djangoproject.com/en/5.1/howto/static-files/
+
+STATIC_URL = "static/"
+
+# Default primary key field type
+# https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
+
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+FORCE_SCRIPT_NAME = '/myphotoapp'
+STATIC_URL = '/myphotoapp/static/'
+
+import os
+
+STATIC_URL = '/static/'  # The default for local dev
+STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]  # Include your app's static files
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")  # For collectstatic
+
+
+
+----- FILE: C:\Users\matt\Desktop\django\myphotoapp\config\urls.py -----
+
+
+from django.contrib import admin
+from django.urls import path
+from photos.views import main_page
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('', main_page, name='main_page'),  # root URL → main page
+]
+
+
+
+----- FILE: C:\Users\matt\Desktop\django\myphotoapp\config\wsgi.py -----
+
+
+"""
+WSGI config for config project.
+
+It exposes the WSGI callable as a module-level variable named ``application``.
+
+For more information on this file, see
+https://docs.djangoproject.com/en/5.1/howto/deployment/wsgi/
+"""
+
+import os
+
+from django.core.wsgi import get_wsgi_application
+
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings")
+
+application = get_wsgi_application()
+
+
+
+----- FILE: C:\Users\matt\Desktop\django\myphotoapp\config\__init__.py -----
+
+
+
+
+
+----- FILE: C:\Users\matt\Desktop\django\myphotoapp\photos\admin.py -----
+
+
+from django.contrib import admin
+
+# Register your models here.
+
+
+
+----- FILE: C:\Users\matt\Desktop\django\myphotoapp\photos\apps.py -----
+
+
+from django.apps import AppConfig
+
+
+class PhotosConfig(AppConfig):
+    default_auto_field = "django.db.models.BigAutoField"
+    name = "photos"
+
+
+
+----- FILE: C:\Users\matt\Desktop\django\myphotoapp\photos\models.py -----
+
+
+from django.db import models
+
+# Create your models here.
+
+
+
+----- FILE: C:\Users\matt\Desktop\django\myphotoapp\photos\tests.py -----
+
+
+from django.test import TestCase
+
+# Create your tests here.
+
+
+
+----- FILE: C:\Users\matt\Desktop\django\myphotoapp\photos\views.py -----
+
+
+from django.shortcuts import render
+
+def main_page(request):
+    return render(request, 'photos/main.html')
+
+
+
+----- FILE: C:\Users\matt\Desktop\django\myphotoapp\photos\__init__.py -----
+
+
+
+
+
+----- FILE: C:\Users\matt\Desktop\django\myphotoapp\photos\templates\photos\main.html -----
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Photo Grid</title>
+  <!-- Bootstrap CSS -->
+  <!-- Note: For production, consider self-hosting or version pinning your assets -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <style>
+    /* Custom styling */
+    .photo-container {
+      border: 2px solid black;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100%;
+      max-width: 100%;
+      position: relative;
+      background-color: #f8f9fa;
+    }
+    .photo-container img {
+      width: 100%;
+      height: auto;
+      max-height: 200px; /* Limit the height for a more consistent grid */
+      object-fit: contain;
+      margin-bottom: 10px;
+    }
+    .photo-container button {
+      position: relative;
+      padding: 8px 16px;
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-size: 16px;
+      margin-top: 10px;
+    }
+    .photo-container button:hover {
+      background-color: #0056b3;
+    }
+    .caption {
+      font-size: 14px;
+      font-weight: bold;
+      color: black;
+      margin-bottom: 10px; /* Ensure the caption has space */
+    }
+    .labels {
+      text-align: center;
+      font-size: 16px;
+    }
+    .dropdown-menu {
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container my-4">
+    <!-- Header section -->
+    <div class="text-center mb-4">
+      <h1>Repair Tracking</h1>
+
+      <!-- Repair ID Button -->
+      <button class="btn btn-light" id="repairIdBtn" data-bs-toggle="modal" data-bs-target="#repairIdModal">
+        Repair ID 48
+      </button>
+
+      <!-- Project Dropdown -->
+      <div class="btn-group">
+        <button class="btn btn-light dropdown-toggle" type="button" id="projectDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+          Project 123 Main Street
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="projectDropdown">
+          <li><a class="dropdown-item" href="#">222 Water Street</a></li>
+          <li><a class="dropdown-item" href="#">777 Bingham Road</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Photo grid -->
+    <div class="row row-cols-1 row-cols-md-2 g-4">
+      <!-- Photo 1 -->
+      <div class="col">
+        <div class="photo-container">
+          <div class="caption">Survey Photo</div>
+          <img src="placeholder.jpg" alt="Photo 1" id="photo1">
+          <button onclick="document.getElementById('photo1-input').click()">Upload/Take Photo</button>
+        </div>
+      </div>
+      <!-- Photo 2 -->
+      <div class="col">
+        <div class="photo-container">
+          <div class="caption">Demo Photo</div>
+          <img src="placeholder.jpg" alt="Photo 2" id="photo2">
+          <button onclick="document.getElementById('photo2-input').click()">Upload/Take Photo</button>
+        </div>
+      </div>
+      <!-- Photo 3 -->
+      <div class="col">
+        <div class="photo-container">
+          <div class="caption">Finish Detail</div>
+          <img src="placeholder.jpg" alt="Photo 3" id="photo3">
+          <button onclick="document.getElementById('photo3-input').click()">Upload/Take Photo</button>
+        </div>
+      </div>
+      <!-- Photo 4 -->
+      <div class="col">
+        <div class="photo-container">
+          <div class="caption">Finish Context</div>
+          <img src="placeholder.jpg" alt="Photo 4" id="photo4">
+          <button onclick="document.getElementById('photo4-input').click()">Upload/Take Photo</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Labels section -->
+    <div class="labels mt-4">
+      <h5>Values</h5>
+      <ul class="list-unstyled">
+        <li>X Coordinate: 358</li>
+        <li>Y Coordinate: 125</li>
+        <li>Repair Label: Replace Unit</li>
+        <li>Area in Square Feet: 5</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- File input for photo upload -->
+  <input type="file" accept="image/*" style="display: none;" id="photo1-input" onchange="updateImage('photo1')">
+  <input type="file" accept="image/*" style="display: none;" id="photo2-input" onchange="updateImage('photo2')">
+  <input type="file" accept="image/*" style="display: none;" id="photo3-input" onchange="updateImage('photo3')">
+  <input type="file" accept="image/*" style="display: none;" id="photo4-input" onchange="updateImage('photo4')">
+
+  <!-- Modal for Repair ID input -->
+  <div class="modal fade" id="repairIdModal" tabindex="-1" aria-labelledby="repairIdModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="repairIdModalLabel">Enter New Repair ID</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <input type="number" class="form-control" id="newRepairId" placeholder="Enter new repair ID">
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" onclick="updateRepairId()">Save Repair ID</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function updateImage(photoId) {
+      var input = document.getElementById(photoId + '-input');
+      var photoElement = document.getElementById(photoId);
+      var file = input.files[0];
+      var reader = new FileReader();
+
+      reader.onloadend = function () {
+        photoElement.src = reader.result;
+      };
+
+      if (file) {
+        reader.readAsDataURL(file);
+      }
+    }
+
+    function updateRepairId() {
+      var newRepairId = document.getElementById('newRepairId').value;
+      if (newRepairId) {
+        document.getElementById('repairIdBtn').innerText = "Repair ID " + newRepairId;
+        var repairIdModal = new bootstrap.Modal(document.getElementById('repairIdModal'));
+        repairIdModal.hide();
+      }
+    }
+  </script>
+
+  <!-- Bootstrap JS and dependencies -->
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
+</body>
+</html>
+2025-03-07 09:34:30,289 - INFO - Project contents appended to log file successfully.
+2025-03-07 09:34:30,290 - INFO - Script finished successfully.

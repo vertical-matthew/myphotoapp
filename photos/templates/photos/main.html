@@ -4,12 +4,15 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
   <title>Photo Grid</title>
+
   <!-- Bootstrap CSS -->
-  <!-- Note: For production, consider self-hosting or version pinning your assets -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  >
 
   <style>
-    /* Custom styling */
+    /* Existing custom styling */
     .photo-container {
       border: 2px solid black;
       padding: 10px;
@@ -25,7 +28,7 @@
     .photo-container img {
       width: 100%;
       height: auto;
-      max-height: 200px; /* Limit the height for a more consistent grid */
+      max-height: 200px;
       object-fit: contain;
       margin-bottom: 10px;
     }
@@ -46,7 +49,7 @@
       font-size: 14px;
       font-weight: bold;
       color: black;
-      margin-bottom: 10px; /* Ensure the caption has space */
+      margin-bottom: 10px;
     }
     .labels {
       text-align: center;
@@ -60,59 +63,135 @@
 <body>
 
   <div class="container my-4">
+
     <!-- Header section -->
     <div class="text-center mb-4">
       <h1>Repair Tracking</h1>
 
-      <!-- Repair ID Button -->
+      <!-- Navigation links (if desired) -->
+      <a href="{% url 'project_list' %}" class="btn btn-primary mb-3">Go to All Projects</a><br>
+
+      <!-- Modal Launch: Repair ID Button -->
+      <!-- This is your existing logic for opening the modal to change the Repair ID -->
       <button class="btn btn-light" id="repairIdBtn" data-bs-toggle="modal" data-bs-target="#repairIdModal">
         Repair ID 48
       </button>
 
-      <!-- Project Dropdown -->
+      <!-- Project Dropdown for user to choose a Project -->
       <div class="btn-group">
         <button class="btn btn-light dropdown-toggle" type="button" id="projectDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-          Project 123 Main Street
+          Select a Project
         </button>
         <ul class="dropdown-menu" aria-labelledby="projectDropdown">
-          <li><a class="dropdown-item" href="#">222 Water Street</a></li>
-          <li><a class="dropdown-item" href="#">777 Bingham Road</a></li>
+          <!-- Dynamically list out all the projects from the context -->
+          {% for proj in projects %}
+            <li>
+              <a class="dropdown-item"
+                 href="#"
+                 onclick="updateProject('{{ proj.id }}', '{{ proj.name }}')">
+                 {{ proj.name }}
+              </a>
+            </li>
+          {% endfor %}
         </ul>
       </div>
     </div>
 
-    <!-- Photo grid -->
+    <!-- File Upload Forms (One for Each Category) -->
+    <!--
+         We keep your "grid" layout with 4 placeholders: Survey, Demo, Detail, Context.
+         Now each placeholder is inside a form that truly uploads an image.
+         The "category" is set in a hidden input.
+         The "project_id" and "repair_id" are also stored in hidden inputs,
+         updated dynamically by the user’s selection.
+    -->
+
     <div class="row row-cols-1 row-cols-md-2 g-4">
-      <!-- Photo 1 -->
+      <!-- Survey Photo -->
       <div class="col">
         <div class="photo-container">
           <div class="caption">Survey Photo</div>
+
+          <!-- Display a client-side preview -->
           <img src="placeholder.jpg" alt="Photo 1" id="photo1">
-          <button onclick="document.getElementById('photo1-input').click()">Upload/Take Photo</button>
+
+          <!-- Actual form to upload the survey photo to the server -->
+          <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <!-- Hidden fields: category, project, repair -->
+            <input type="hidden" name="category" value="survey">
+            <input type="hidden" name="project_id" id="project_id_survey" value="">
+            <input type="hidden" name="repair_id" id="repair_id_survey" value="">
+
+            <!-- File input is hidden; we trigger it with the button below -->
+            <input type="file" name="image" accept="image/*" style="display: none;" id="photo1-input" onchange="showPreview(event, 'photo1')">
+
+            <!-- Upload button triggers the file chooser -->
+            <button type="button" onclick="document.getElementById('photo1-input').click()">Choose Photo</button>
+
+            <!-- Upon submitting, we do an actual POST -->
+            <button type="submit" name="upload_photo" class="mt-2">Upload Photo</button>
+          </form>
         </div>
       </div>
-      <!-- Photo 2 -->
+
+      <!-- Demo Photo -->
       <div class="col">
         <div class="photo-container">
           <div class="caption">Demo Photo</div>
           <img src="placeholder.jpg" alt="Photo 2" id="photo2">
-          <button onclick="document.getElementById('photo2-input').click()">Upload/Take Photo</button>
+
+          <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input type="hidden" name="category" value="demo">
+            <input type="hidden" name="project_id" id="project_id_demo" value="">
+            <input type="hidden" name="repair_id" id="repair_id_demo" value="">
+
+            <input type="file" name="image" accept="image/*" style="display: none;" id="photo2-input" onchange="showPreview(event, 'photo2')">
+
+            <button type="button" onclick="document.getElementById('photo2-input').click()">Choose Photo</button>
+            <button type="submit" name="upload_photo" class="mt-2">Upload Photo</button>
+          </form>
         </div>
       </div>
-      <!-- Photo 3 -->
+
+      <!-- Detail Photo -->
       <div class="col">
         <div class="photo-container">
           <div class="caption">Finish Detail</div>
           <img src="placeholder.jpg" alt="Photo 3" id="photo3">
-          <button onclick="document.getElementById('photo3-input').click()">Upload/Take Photo</button>
+
+          <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input type="hidden" name="category" value="detail">
+            <input type="hidden" name="project_id" id="project_id_detail" value="">
+            <input type="hidden" name="repair_id" id="repair_id_detail" value="">
+
+            <input type="file" name="image" accept="image/*" style="display: none;" id="photo3-input" onchange="showPreview(event, 'photo3')">
+
+            <button type="button" onclick="document.getElementById('photo3-input').click()">Choose Photo</button>
+            <button type="submit" name="upload_photo" class="mt-2">Upload Photo</button>
+          </form>
         </div>
       </div>
-      <!-- Photo 4 -->
+
+      <!-- Context Photo -->
       <div class="col">
         <div class="photo-container">
           <div class="caption">Finish Context</div>
           <img src="placeholder.jpg" alt="Photo 4" id="photo4">
-          <button onclick="document.getElementById('photo4-input').click()">Upload/Take Photo</button>
+
+          <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input type="hidden" name="category" value="context">
+            <input type="hidden" name="project_id" id="project_id_context" value="">
+            <input type="hidden" name="repair_id" id="repair_id_context" value="">
+
+            <input type="file" name="image" accept="image/*" style="display: none;" id="photo4-input" onchange="showPreview(event, 'photo4')">
+
+            <button type="button" onclick="document.getElementById('photo4-input').click()">Choose Photo</button>
+            <button type="submit" name="upload_photo" class="mt-2">Upload Photo</button>
+          </form>
         </div>
       </div>
     </div>
@@ -128,12 +207,6 @@
       </ul>
     </div>
   </div>
-
-  <!-- File input for photo upload -->
-  <input type="file" accept="image/*" style="display: none;" id="photo1-input" onchange="updateImage('photo1')">
-  <input type="file" accept="image/*" style="display: none;" id="photo2-input" onchange="updateImage('photo2')">
-  <input type="file" accept="image/*" style="display: none;" id="photo3-input" onchange="updateImage('photo3')">
-  <input type="file" accept="image/*" style="display: none;" id="photo4-input" onchange="updateImage('photo4')">
 
   <!-- Modal for Repair ID input -->
   <div class="modal fade" id="repairIdModal" tabindex="-1" aria-labelledby="repairIdModalLabel" aria-hidden="true">
@@ -155,33 +228,68 @@
   </div>
 
   <script>
-    function updateImage(photoId) {
-      var input = document.getElementById(photoId + '-input');
-      var photoElement = document.getElementById(photoId);
-      var file = input.files[0];
-      var reader = new FileReader();
-
-      reader.onloadend = function () {
-        photoElement.src = reader.result;
+    /*
+     * showPreview(event, photoId):
+     * Reads the chosen file and updates the corresponding <img> tag
+     * so the user sees a client-side preview before uploading.
+     */
+    function showPreview(event, photoId) {
+      const reader = new FileReader();
+      reader.onload = function(){
+        const output = document.getElementById(photoId);
+        output.src = reader.result;
       };
-
-      if (file) {
-        reader.readAsDataURL(file);
-      }
+      reader.readAsDataURL(event.target.files[0]);
     }
 
+    /*
+     * updateProject(projectId, projectName):
+     * Called when user clicks on a Project in the dropdown.
+     * We'll place the chosen projectId into all hidden form fields
+     * so subsequent uploads know which project is selected.
+     */
+    function updateProject(projectId, projectName) {
+      // For each of the 4 placeholders (survey, demo, detail, context),
+      // update the hidden "project_id" field.
+      document.getElementById('project_id_survey').value = projectId;
+      document.getElementById('project_id_demo').value   = projectId;
+      document.getElementById('project_id_detail').value = projectId;
+      document.getElementById('project_id_context').value= projectId;
+
+      // Optionally change the button label or do more UI updates
+      document.getElementById('projectDropdown').innerText = "Project " + projectName;
+    }
+
+    /*
+     * updateRepairId():
+     * Triggered by the "Save Repair ID" button in the modal.
+     * We copy that numeric value into each form's "repair_id" hidden field.
+     */
     function updateRepairId() {
       var newRepairId = document.getElementById('newRepairId').value;
       if (newRepairId) {
+        // Update the visible button
         document.getElementById('repairIdBtn').innerText = "Repair ID " + newRepairId;
+
+        // Update all hidden "repair_id" fields for each category
+        document.getElementById('repair_id_survey').value = newRepairId;
+        document.getElementById('repair_id_demo').value   = newRepairId;
+        document.getElementById('repair_id_detail').value = newRepairId;
+        document.getElementById('repair_id_context').value= newRepairId;
+
+        // Hide the modal
         var repairIdModal = new bootstrap.Modal(document.getElementById('repairIdModal'));
         repairIdModal.hide();
       }
     }
   </script>
 
-  <!-- Bootstrap JS and dependencies -->
-  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
+  <!-- Bootstrap JS and Popper -->
+  <script
+    src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js">
+  </script>
+  <script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js">
+  </script>
 </body>
 </html>
