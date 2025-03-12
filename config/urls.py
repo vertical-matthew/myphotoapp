@@ -7,13 +7,13 @@ from django.urls import path
 from photos.views import main_page, project_list, project_detail, repair_detail
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('mk/', admin.site.urls),
 
     # Original main page route
     path('', main_page, name='main_page'),
 
     # New routes for Projects and Repairs
-    path('projects/', project_list, name='project_list'),
+    path('pj/', project_list, name='project_list'),
     path('projects/<int:project_id>/', project_detail, name='project_detail'),
     path('projects/<int:project_id>/repairs/<int:repair_id>/', repair_detail, name='repair_detail'),
 ]
